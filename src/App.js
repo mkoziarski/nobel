@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { debounce } from 'lodash';
+import { extractResults, getQueryUrl } from './nobelApi';
+import SearchBox from './SearchBox';
+import ResultList from './ResultList';
+import style from './App.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { results: [], loading: false };
+  }
+
+  componentDidMount() {
+    this.fetchResults('');
+  }
+
+  fetchResults = debounce((value) => {
+    this.setState({ loading: true });
+    fetch(getQueryUrl(value))
+      .then((response) => response.json())
+      .then((data) => { this.setState({ results: extractResults(data), loading: false }); })
+      .catch(() => { this.setState({ loading: false }); });
+  }, 300);
+
+  handleSearchChange = (value) => {
+    this.fetchResults(value);
+  };
+
+  render() {
+    const { results, loading } = this.state;
+
+    return (
+      <div className={style.App}>
+        <div>
+          <SearchBox onChange={this.handleSearchChange} />
+        </div>
+        <div className={style.loading}>{loading ? 'loading...' : ''}</div>
+        <div>
+          <ResultList laureates={results} />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;

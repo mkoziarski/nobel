@@ -1,0 +1,25 @@
+.empty {
+  opacity: 0.7;
+  text-align: center;
+}
+
+.laureate {
+  display: flex;
+  margin-top: 1em;
+}
+
+.image {
+  flex: 0 0 8em;
+  max-width: 33%;
+}
+
+.info {
+  flex: 1 1 auto;
+  padding-left: 1em;
+}
+
+.nameHeading {
+  margin: 0 0 0.5em;
+  font-size: 1.5em;
+  font-weight: normal;
+}
